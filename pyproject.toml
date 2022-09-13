@@ -1,0 +1,26 @@
+[tool.poetry]
+name = "magface-demo"
+version = "0.1.0"
+description = "Demo with MagFace"
+authors = ["Lucas Parzianello <lucaspar@users.noreply.github.com>"]
+license = "MIT"
+readme = "README.md"
+packages = [{include = "magface_demo"}]
+
+[tool.poetry.dependencies]
+python = "^3.10"
+numpy = "^1.23.3"
+opencv-python = "^4.6.0.66"
+seaborn = "^0.12.0"
+matplotlib = "^3.5.3"
+ipywidgets = "^8.0.2"
+ipykernel = "^6.15.2"
+
+
+[tool.poetry.group.dev.dependencies]
+black = "^22.8.0"
+isort = "^5.10.1"
+
+[build-system]
+requires = ["poetry-core"]
+build-backend = "poetry.core.masonry.api"
