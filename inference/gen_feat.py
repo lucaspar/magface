@@ -10,6 +10,7 @@ import pprint
 import time
 
 import cv2
+import numpy as np
 import torch
 import torch.utils.data as data
 import torch.utils.data.distributed
@@ -19,6 +20,7 @@ from torchvision import transforms
 
 from utils import utils
 
+
 # parse the args
 def parse_args():
     cprint("=> parse the args ...", "green")
@@ -27,7 +29,9 @@ def parse_args():
         "--arch", default="iresnet100", type=str, help="backbone architechture"
     )
     parser.add_argument("--inf_list", default="", type=str, help="the inference list")
-    parser.add_argument("--feat_list", type=str, help="The save path for saveing features")
+    parser.add_argument(
+        "--feat_list", type=str, help="The save path for saveing features"
+    )
     parser.add_argument(
         "-j",
         "--workers",
@@ -65,7 +69,9 @@ def parse_args():
         help="print frequency (default: 10)",
     )
     parser.add_argument("--cpu-mode", action="store_true", help="Use the CPU.")
-    parser.add_argument("--dist", default=1, help="use this if model is trained with dist")
+    parser.add_argument(
+        "--dist", default=1, help="use this if model is trained with dist"
+    )
     args = parser.parse_args()
     return args
 
@@ -97,6 +103,22 @@ class ImgInfLoader(data.Dataset):
 
     def __len__(self):
         return len(self.imgs)
+
+
+def preprocess_raw_opencv_image(original_image: np.ndarray) -> np.ndarray:
+    """Does the same default preprocessing as the example.
+    Uses the transformations in the example of MagFace.
+    Assumes the frame was read with opencv (H x W x D=3 and BGR).
+    """
+    transform = transforms.Compose(
+        [
+            transforms.ToTensor(),
+            transforms.Normalize(mean=[0.0, 0.0, 0.0], std=[1.0, 1.0, 1.0]),
+        ]
+    )
+    _img = cv2.flip(original_image, 1)
+    transformed = transform(_img)
+    return transformed
 
 
 def main(args):
@@ -148,12 +170,12 @@ def main_worker(ngpus_per_node, args):
     with torch.no_grad():
         end = time.time()
 
-        for idx, (input, img_paths) in enumerate(inf_loader):
+        for idx, (model_inputs, img_paths) in enumerate(inf_loader):
             # measure data loading time
             data_time.update(time.time() - end)
 
             # compute output
-            embedding_feat = model(input[0])
+            embedding_feat = model(model_inputs[0])
 
             # embedding_feat = F.normalize(embedding_feat, p=2, dim=1)
             _feat = embedding_feat.data.cpu().numpy()
