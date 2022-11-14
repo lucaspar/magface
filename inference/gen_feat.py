@@ -14,7 +14,7 @@ import numpy as np
 import torch
 import torch.utils.data as data
 import torch.utils.data.distributed
-from network_inf import builder_inf
+from inference.network_inf import builder_inf
 from termcolor import cprint
 from torchvision import transforms
 
@@ -201,4 +201,4 @@ if __name__ == "__main__":
     cprint("=> parsing the args ...", "green")
     args = parse_args()
     pprint.pprint(vars(args))
-    # main(args)
+    main(args)

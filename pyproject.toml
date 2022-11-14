@@ -23,6 +23,7 @@
     tqdm = "^4.64.1"
     termcolor = "^2.0.1"
     torchvision = "^0.13.1"
+    nbpreview = "^0.9.1"
 
 
     [tool.poetry.group.dev.dependencies]

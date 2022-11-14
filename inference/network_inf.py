@@ -3,7 +3,7 @@ import sys
 
 sys.path.append("..")
 
-from ..models import iresnet
+from models import iresnet
 from collections import OrderedDict
 from tqdm import tqdm
 from termcolor import cprint
